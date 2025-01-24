@@ -9,7 +9,7 @@ use elliptic_curve::{
     ops::Reduce,
     rand_core::CryptoRngCore,
     subtle::ConditionallySelectable,
-    zeroize::{Zeroize, ZeroizeOnDrop},
+    zeroize::{Zeroize, ZeroizeOnDrop}, Group, PrimeField
 };
 use sha2::{Digest, Sha256};
 use signature::{
@@ -49,7 +49,7 @@ impl SigningKey {
 
     /// Serialize as bytes.
     pub fn to_bytes(&self) -> FieldBytes {
-        self.secret_key.to_bytes()
+        self.secret_key.to_repr()
     }
 
     /// Get the [`VerifyingKey`] that corresponds to this signing key.
@@ -97,13 +97,16 @@ impl SigningKey {
     pub fn sign_raw(&self, msg: &[u8], aux_rand: &[u8; 32]) -> Result<Signature> {
         let mut t = tagged_hash(AUX_TAG).chain_update(aux_rand).finalize();
 
-        for (a, b) in t.iter_mut().zip(self.secret_key.to_bytes().iter()) {
+        for (a, b) in t.iter_mut().zip(self.secret_key.to_repr().iter()) {
             *a ^= b
         }
 
+        let affine = self.verifying_key.as_affine();
+        let (x, _) = affine.field_elements();
+
         let rand = tagged_hash(NONCE_TAG)
             .chain_update(t)
-            .chain_update(self.verifying_key.as_affine().x.to_bytes())
+            .chain_update(x.to_bytes())
             .chain_update(msg)
             .finalize();
 
@@ -113,7 +116,9 @@ impl SigningKey {
 
         let secret_key = k.secret_key;
         let verifying_point = AffinePoint::from(k.verifying_key);
-        let r = verifying_point.x.normalize();
+        
+        let (x, _) = verifying_point.field_elements();
+        let r = x.normalize();
 
         let e = <Scalar as Reduce<U256>>::reduce_bytes(
             &tagged_hash(CHALLENGE_TAG)
@@ -137,9 +142,11 @@ impl SigningKey {
 impl From<NonZeroScalar> for SigningKey {
     #[inline]
     fn from(mut secret_key: NonZeroScalar) -> SigningKey {
-        let odd = (ProjectivePoint::GENERATOR * *secret_key)
-            .to_affine()
-            .y
+        let point = ProjectivePoint::generator() * *secret_key;
+        let affine = point.to_affine();
+        let (_, y) = affine.field_elements();
+
+        let odd = y
             .normalize()
             .is_odd();
 
