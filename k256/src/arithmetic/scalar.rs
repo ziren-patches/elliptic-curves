@@ -125,6 +125,7 @@ impl Scalar {
     }
 
     /// Inverts the scalar.
+    #[cfg(not(target_os = "zkvm"))]
     pub fn invert(&self) -> CtOption<Self> {
         // Using an addition chain from
         // https://briansmith.org/ecc-inversion-addition-chains-01#secp256k1_scalar_inversion
@@ -173,6 +174,25 @@ impl Scalar {
             .pow2k(8).mul(&x6);
 
         CtOption::new(res, !self.is_zero())
+    }
+
+    /// Compute the inverse using the ZKM2 Hook.
+    #[cfg(target_os = "zkvm")]
+    pub fn invert(&self) -> CtOption<Self> {
+        if self.is_zero().into() {
+            return CtOption::new(Self::ZERO, 0.into());
+        }
+
+        let result = crate::call_inv_hook(self.to_bytes().as_slice(), Self::MODULUS);
+        let result = FieldBytes::from_slice(result.as_slice());
+        let result = Self::from_repr(*result).unwrap();
+
+        assert!(result * *self == Self::ONE, "Inverse hook returned invalid hint, inverse is invalid.");
+
+        CtOption::new(
+            result, 
+            Choice::from(1)
+        )
     }
 
     /// Returns the scalar modulus as a `BigUint` object.
@@ -254,6 +274,7 @@ impl Field for Scalar {
     /// Tonelli-Shank's algorithm for q mod 16 = 1
     /// <https://eprint.iacr.org/2012/685.pdf> (page 12, algorithm 5)
     #[allow(clippy::many_single_char_names)]
+    #[cfg(not(target_os = "zkvm"))]
     fn sqrt(&self) -> CtOption<Self> {
         // Note: `pow_vartime` is constant-time with respect to `self`
         let w = self.pow_vartime([
@@ -291,6 +312,28 @@ impl Field for Scalar {
         }
 
         CtOption::new(x, x.square().ct_eq(self))
+    }
+
+    #[cfg(target_os = "zkvm")]
+    fn sqrt(&self) -> CtOption<Self> {
+        if self.is_zero().into() {
+            return CtOption::new(Self::ZERO, 1.into());
+        }
+
+        #[allow(non_snake_case)]
+        let NQR: Scalar = Scalar::from_u128(5);
+
+        let (status, result) = crate::call_sqrt_hook(self.to_bytes().as_slice(), Self::MODULUS, NQR.to_bytes().as_slice());
+        let result = FieldBytes::from_slice(result.as_slice());
+        let result = Self::from_repr(*result).unwrap();
+
+        if status == 0 {
+            assert!(result * result == self * &NQR, "Sqrt hook returned invalid hint, NQR root didnt match.");
+        } else {
+            assert!(result * result == *self, "Sqrt hook returned invalid hint, sqrt is invalid.");
+        }
+
+        CtOption::new(result, Choice::from(status))
     }
 
     fn sqrt_ratio(num: &Self, div: &Self) -> (Choice, Self) {
@@ -343,7 +386,7 @@ impl PrimeField for Scalar {
     }
 }
 
-#[cfg(feature = "bits")]
+#[cfg(all(feature = "bits", not(target_os = "zkvm")))]
 impl PrimeFieldBits for Scalar {
     #[cfg(target_pointer_width = "32")]
     type ReprBits = [u32; 8];
@@ -735,7 +778,7 @@ impl<'a> Product<&'a Scalar> for Scalar {
     }
 }
 
-#[cfg(feature = "bits")]
+#[cfg(all(feature = "bits", not(target_os = "zkvm")))]
 impl From<&Scalar> for ScalarBits {
     fn from(scalar: &Scalar) -> ScalarBits {
         scalar.0.to_words().into()

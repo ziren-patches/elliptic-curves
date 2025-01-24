@@ -1,10 +1,10 @@
 //! Taproot Schnorr verifying key.
 
 use super::{tagged_hash, Signature, CHALLENGE_TAG};
-use crate::{AffinePoint, FieldBytes, ProjectivePoint, PublicKey, Scalar};
+use crate::{arithmetic::FieldElement, AffinePoint, FieldBytes, ProjectivePoint, PublicKey, Scalar};
 use elliptic_curve::{
     bigint::U256,
-    group::prime::PrimeCurveAffine,
+    group::{prime::PrimeCurveAffine, Group},
     ops::{LinearCombination, Reduce},
     point::DecompactPoint,
 };
@@ -32,7 +32,10 @@ impl VerifyingKey {
 
     /// Serialize as bytes.
     pub fn to_bytes(&self) -> FieldBytes {
-        self.as_affine().x.to_bytes()
+        let affine = self.as_affine();
+        let (x, _) = affine.field_elements();
+
+        x.to_bytes()
     }
 
     /// Compute Schnorr signature.
@@ -61,14 +64,16 @@ impl VerifyingKey {
         );
 
         let R = ProjectivePoint::lincomb(
-            &ProjectivePoint::GENERATOR,
+            &ProjectivePoint::generator(),
             s,
             &self.inner.to_projective(),
             &-e,
         )
         .to_affine();
 
-        if R.is_identity().into() || R.y.normalize().is_odd().into() || R.x.normalize() != *r {
+        let (rx, ry) = R.field_elements();
+
+        if R.is_identity().into() || ry.normalize().is_odd().into() || rx.normalize() != *r {
             return Err(Error::new());
         }
 
@@ -146,7 +151,10 @@ impl TryFrom<PublicKey> for VerifyingKey {
     type Error = Error;
 
     fn try_from(public_key: PublicKey) -> Result<VerifyingKey> {
-        if public_key.as_affine().y.normalize().is_even().into() {
+        let affine = public_key.as_affine();
+        let (_, y) = affine.field_elements();
+
+        if y.normalize().is_even().into() {
             Ok(Self { inner: public_key })
         } else {
             Err(Error::new())

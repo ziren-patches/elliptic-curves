@@ -170,6 +170,7 @@ impl FieldElement {
 
     /// Returns the multiplicative inverse of self, if self is non-zero.
     /// The result has magnitude 1, but is not normalized.
+    #[cfg(not(target_os = "zkvm"))]
     pub fn invert(&self) -> CtOption<Self> {
         // The binary representation of (p - 2) has 5 blocks of 1s, with lengths in
         // { 1, 2, 22, 223 }. Use an addition chain to calculate 2^n - 1 for each block:
@@ -203,6 +204,7 @@ impl FieldElement {
 
     /// Returns the square root of self mod p, or `None` if no square root exists.
     /// The result has magnitude 1, but is not normalized.
+    #[cfg(not(target_os = "zkvm"))]
     pub fn sqrt(&self) -> CtOption<Self> {
         /*
         Given that p is congruent to 3 mod 4, we can compute the square root of
@@ -238,6 +240,45 @@ impl FieldElement {
 
         // Only return Some if it's the square root.
         CtOption::new(res, is_root)
+    }
+
+    #[cfg(target_os = "zkvm")]
+    pub fn sqrt(&self) -> CtOption<Self> {
+        let value = self.normalize();
+        if value.is_zero().into() {
+            return CtOption::new(Self::ZERO, 1.into());
+        }
+
+        /// 3 is a NQR of the secp256k1 base field.
+        const NQR: FieldElement = FieldElement::from_u64(3);
+
+        let (status, result) = crate::call_sqrt_hook(value.to_bytes().as_slice(), Self::MODULUS, NQR.to_bytes().as_slice());
+        let result = FieldBytes::from_slice(result.as_slice());
+        let result = Self::from_repr(*result).unwrap();
+
+        if status == 0 {
+            assert!(((result * result).negate(1) + value * &NQR).normalizes_to_zero().unwrap_u8() == 1, "Sqrt hook returned invalid hint, NQR root didnt match.");
+        } else {
+            assert!(((result * result).negate(1) + value).normalizes_to_zero().unwrap_u8() == 1, "Sqrt hook returned invalid hint, sqrt is invalid.");
+        }
+
+        CtOption::new(result, Choice::from(status))
+    }
+
+    #[cfg(target_os = "zkvm")]
+    pub fn invert(&self) -> CtOption<Self> {
+        let value = self.normalize();
+        if value.is_zero().into() {
+            return CtOption::new(Self::ZERO, 0.into());
+        }
+
+        let result = crate::call_inv_hook(self.to_bytes().as_slice(), Self::MODULUS);
+        let result = FieldBytes::from_slice(result.as_slice());
+        let result = Self::from_repr(*result).unwrap();
+
+        assert!(((result * value).negate(1) + Self::ONE).normalizes_to_zero().unwrap_u8() == 1, "Inv hook returned invalid hint, invert is invalid.");
+
+        CtOption::new(result, 1.into())
     }
 
     #[cfg(test)]
