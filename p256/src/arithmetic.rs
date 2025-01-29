@@ -5,21 +5,88 @@
 //! [NIST SP 800-186]: https://csrc.nist.gov/publications/detail/sp/800-186/final
 
 pub(crate) mod field;
-#[cfg(feature = "hash2curve")]
+
+#[cfg(all(not(target_os = "zkvm"), feature = "hash2curve"))]
 mod hash2curve;
+
 pub(crate) mod scalar;
 pub(crate) mod util;
 
-use self::{field::FieldElement, scalar::Scalar};
+use self::field::FieldElement;
 use crate::NistP256;
-use elliptic_curve::{CurveArithmetic, PrimeCurveArithmetic};
-use primeorder::{point_arithmetic, PrimeCurveParams};
 
-/// Elliptic curve point in affine coordinates.
-pub type AffinePoint = primeorder::AffinePoint<NistP256>;
+#[cfg(not(target_os = "zkvm"))]
+use {
+    elliptic_curve::PrimeCurveArithmetic,
+    primeorder::{point_arithmetic, PrimeCurveParams},
+};
 
-/// Elliptic curve point in projective coordinates.
-pub type ProjectivePoint = primeorder::ProjectivePoint<NistP256>;
+use elliptic_curve::CurveArithmetic;
+
+#[cfg(not(target_os = "zkvm"))]
+mod native_types {
+    use super::*;
+
+    /// Elliptic curve point in affine coordinates.
+    pub type AffinePoint = primeorder::AffinePoint<NistP256>;
+
+    /// Elliptic curve point in projective coordinates.
+    pub type ProjectivePoint = primeorder::ProjectivePoint<NistP256>;
+
+    pub type Scalar = crate::arithmetic::scalar::Scalar;
+}
+
+#[cfg(not(target_os = "zkvm"))]
+pub use native_types::*;
+
+#[cfg(target_os = "zkvm")]
+mod succinct_types {
+    use super::{NistP256, FieldElement, scalar};
+    use elliptic_curve::{FieldBytes, subtle::CtOption};
+
+    impl zkm_lib::ecdsa::ECDSACurve for NistP256 {
+        // a = -3
+        const EQUATION_A: FieldElement = FieldElement::neg(&FieldElement::from_u64(3));
+
+        const EQUATION_B: FieldElement =
+            FieldElement::from_hex("5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b");
+
+        type FieldElement = FieldElement;
+
+        type ZKMAffinePoint = zkm_lib::secp256r1::Secp256r1Point;
+    }
+
+    impl zkm_lib::ecdsa::Field<NistP256> for FieldElement {
+        fn from_bytes(bytes: &FieldBytes<NistP256>) -> CtOption<Self> {
+            FieldElement::from_bytes(bytes)
+        }
+
+        fn to_bytes(self) -> FieldBytes<NistP256> {
+            FieldElement::to_bytes(self)
+        }
+
+        #[inline]
+        fn normalize(self) -> Self {
+            self
+        }
+    }
+
+    /// Elliptic curve point in affine coordinates.
+    ///
+    /// For use inside the zkMIPS zkvm.
+    pub type AffinePoint = zkm_lib::ecdsa::AffinePoint<NistP256>;
+
+    /// Elliptic curve point in projective coordinates.
+    /// 
+    /// For use inside the zkMIPS zkvm.
+    pub type ProjectivePoint = zkm_lib::ecdsa::ProjectivePoint<NistP256>;
+
+    /// The actual scalar type used in the zkMIPS zkvm.
+    pub type Scalar = scalar::Scalar;
+}
+
+#[cfg(target_os = "zkvm")]
+pub use succinct_types::*;
 
 impl CurveArithmetic for NistP256 {
     type AffinePoint = AffinePoint;
@@ -27,6 +94,7 @@ impl CurveArithmetic for NistP256 {
     type Scalar = Scalar;
 }
 
+#[cfg(not(target_os = "zkvm"))]
 impl PrimeCurveArithmetic for NistP256 {
     type CurveGroup = ProjectivePoint;
 }
@@ -34,6 +102,7 @@ impl PrimeCurveArithmetic for NistP256 {
 /// Adapted from [NIST SP 800-186] § G.1.2: Curve P-256.
 ///
 /// [NIST SP 800-186]: https://csrc.nist.gov/publications/detail/sp/800-186/final
+#[cfg(not(target_os = "zkvm"))]
 impl PrimeCurveParams for NistP256 {
     type FieldElement = FieldElement;
     type PointArithmetic = point_arithmetic::EquationAIsMinusThree;
