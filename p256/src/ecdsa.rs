@@ -39,7 +39,12 @@
 //! # }
 //! ```
 
-pub use ecdsa_core::signature::{self, Error};
+/// zkMIPS-patches: re-export ecdsa-core as its our patched version.
+pub use ecdsa_core::{
+    self,
+    RecoveryId,
+    signature::{self, Error},
+};
 
 use super::NistP256;
 
@@ -72,7 +77,9 @@ impl ecdsa_core::hazmat::DigestPrimitive for NistP256 {
 impl SignPrimitive<NistP256> for Scalar {}
 
 #[cfg(feature = "ecdsa")]
-impl VerifyPrimitive<NistP256> for AffinePoint {}
+impl VerifyPrimitive<NistP256> for AffinePoint {
+    const HIGH_S_ALLOWED: bool = true;
+}
 
 #[cfg(all(test, feature = "ecdsa"))]
 mod tests {
