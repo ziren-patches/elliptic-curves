@@ -161,7 +161,7 @@ pub type ScalarBits = elliptic_curve::scalar::ScalarBits<Secp256k1>;
 #[cfg(target_os = "zkvm")]
 use alloc::vec::Vec;
 
-/// Call the zkm2 sqrt hook.
+/// Call the zkm sqrt hook.
 ///
 /// This hook takes in a field element and returns the square root of the element (with respect to the modulus).
 ///
@@ -173,26 +173,26 @@ use alloc::vec::Vec;
 /// - `nqr`: The non-quadratic residue wrt the modulus.
 #[cfg(target_os = "zkvm")]
 pub(crate) fn call_sqrt_hook(x: &[u8], modulus: &'static str, nqr: &[u8]) -> (u8, Vec<u8>) {
-    zkm2_lib::unconstrained! {
+    zkm_lib::unconstrained! {
         let mut buf = Vec::new();
         buf.extend_from_slice(&32_u32.to_be_bytes());
         buf.extend_from_slice(x);
         buf.extend_from_slice(&hex::decode(modulus).unwrap());
         buf.extend_from_slice(nqr);
     
-        zkm2_lib::io::write(
-            zkm2_lib::io::FD_FP_SQRT,
+        zkm_lib::io::write(
+            zkm_lib::io::FD_FP_SQRT,
             buf.as_slice()
         );
     }
 
-    let status: u8 = zkm2_lib::io::read_vec().first().copied().expect("sqrt hook should have a status");
-    let result = zkm2_lib::io::read_vec();
+    let status: u8 = zkm_lib::io::read_vec().first().copied().expect("sqrt hook should have a status");
+    let result = zkm_lib::io::read_vec();
 
     (status, result)
 }
 
-/// Call the zkm2 inverse hook.
+/// Call the zkm inverse hook.
 ///
 /// This hook takes in a field element and returns the inverse of the element (with respect to the modulus).
 ///
@@ -200,16 +200,16 @@ pub(crate) fn call_sqrt_hook(x: &[u8], modulus: &'static str, nqr: &[u8]) -> (u8
 /// - `modulus`: The modulus to inverse with respect to.
 #[cfg(target_os = "zkvm")]
 pub(crate) fn call_inv_hook(x: &[u8], modulus: &'static str) -> Vec<u8> {
-    zkm2_lib::unconstrained! {
+    zkm_lib::unconstrained! {
         let mut buf = Vec::new();
         buf.extend_from_slice(&32_u32.to_be_bytes());
         buf.extend_from_slice(x);
         buf.extend_from_slice(&hex::decode(modulus).unwrap());
 
-        zkm2_lib::io::write(zkm2_lib::io::FD_FP_INV, buf.as_slice());
+        zkm_lib::io::write(zkm_lib::io::FD_FP_INV, buf.as_slice());
     }
 
-    zkm2_lib::io::read_vec()
+    zkm_lib::io::read_vec()
 }
 
 #[cfg(all(target_os = "zkvm", feature = "hash2curve"))]

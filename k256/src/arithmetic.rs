@@ -24,16 +24,16 @@ mod zkvm {
     use elliptic_curve::{FieldBytes, subtle::CtOption};
     use super::{Secp256k1, FieldElement, scalar};
 
-    /// ZKM2 AffinePoint
-    pub type AffinePoint = zkm2_lib::ecdsa::AffinePoint<Secp256k1>;
-    /// ZKM2 ProjectivePoint
-    pub type ProjectivePoint = zkm2_lib::ecdsa::ProjectivePoint<Secp256k1>;
-    /// ZKM2 Scalar
+    /// zkMIPS AffinePoint
+    pub type AffinePoint = zkm_lib::ecdsa::AffinePoint<Secp256k1>;
+    /// zkMIPS ProjectivePoint
+    pub type ProjectivePoint = zkm_lib::ecdsa::ProjectivePoint<Secp256k1>;
+    /// zkMIPS Scalar
     pub type Scalar = scalar::Scalar;
 
-    impl zkm2_lib::ecdsa::ECDSACurve for Secp256k1 {
+    impl zkm_lib::ecdsa::ECDSACurve for Secp256k1 {
         type FieldElement = FieldElement;
-        type ZKMAffinePoint = zkm2_lib::secp256k1::Secp256k1Point;
+        type ZKMAffinePoint = zkm_lib::secp256k1::Secp256k1Point;
 
         /// a = 0
         const EQUATION_A: FieldElement = FieldElement::from_bytes_unchecked(&[
@@ -46,7 +46,7 @@ mod zkvm {
         const EQUATION_B: FieldElement = super::CURVE_EQUATION_B;  
     }
 
-    impl zkm2_lib::ecdsa::Field<Secp256k1> for FieldElement {
+    impl zkm_lib::ecdsa::Field<Secp256k1> for FieldElement {
         fn from_bytes(bytes: &FieldBytes<Secp256k1>) -> CtOption<Self> {
             // Only parses canonical form
             Self::from_bytes(bytes)

@@ -611,7 +611,7 @@ dependencies = [
  "sha2",
  "sha3",
  "signature",
- "zkm2-lib",
+ "zkm-lib",
 ]
 
 [[package]]
@@ -1471,9 +1471,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ced3678a2879b30306d323f4542626697a464a97c0a07c9aebf7ebca65cd4dde"
 
 [[package]]
+name = "zkm-lib"
+version = "0.0.1"
+source = "git+https://github.com/zkMIPS/zkMIPS.git?branch=zkMIPS#b1a1dfa6bfd79a04d2b2dab77ac863242b298bb7"
+dependencies = [
+ "bincode",
+ "cfg-if",
+ "elliptic-curve",
+ "serde",
+ "sha2",
+]
+
+[[package]]
 name = "zkm2-lib"
 version = "0.0.1"
-source = "git+https://github.com/zkMIPS/zkm2.git?branch=dev/init#f9f364b43e9d0a51e6b5e5455081c8a5a20fe902"
+source = "git+https://github.com/zkMIPS/zkm2.git?branch=dev/init#7098b80933688d7fbf4b6f9ac11a317404d3743d"
 dependencies = [
  "bincode",
  "cfg-if",
