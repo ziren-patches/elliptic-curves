@@ -161,7 +161,7 @@ pub type ScalarBits = elliptic_curve::scalar::ScalarBits<Secp256k1>;
 #[cfg(target_os = "zkvm")]
 use alloc::vec::Vec;
 
-/// Call the zkm sqrt hook.
+/// Call the zkMIPS sqrt hook.
 ///
 /// This hook takes in a field element and returns the square root of the element (with respect to the modulus).
 ///

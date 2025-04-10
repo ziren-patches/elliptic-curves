@@ -1472,8 +1472,8 @@ checksum = "ced3678a2879b30306d323f4542626697a464a97c0a07c9aebf7ebca65cd4dde"
 
 [[package]]
 name = "zkm-lib"
-version = "0.0.1"
-source = "git+https://github.com/zkMIPS/zkMIPS.git?branch=zkMIPS#b1a1dfa6bfd79a04d2b2dab77ac863242b298bb7"
+version = "1.0.0"
+source = "git+https://github.com/zkMIPS/zkMIPS.git#0dc6b49bad435d3fc5696a63444381438a1343b4"
 dependencies = [
  "bincode",
  "cfg-if",
