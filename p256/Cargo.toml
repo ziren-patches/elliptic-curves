@@ -27,7 +27,7 @@ serdect = { version = "0.2", optional = true, default-features = false }
 sha2 = { version = "0.10", optional = true, default-features = false }
 
 [target.'cfg(all(target_os = "zkvm"))'.dependencies]
-zkm-lib = { git = "https://github.com/zkMIPS/zkMIPS.git", features = ["ecdsa"] }
+zkm-lib = { git = "https://github.com/felicityin/zkMIPS", branch = "upgrade-deps", features = ["ecdsa"] }
 hex = "=0.4"
 
 [dev-dependencies]
