@@ -378,7 +378,7 @@ dependencies = [
 [[package]]
 name = "ecdsa"
 version = "0.16.9"
-source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa#9d5990a8cf6245a5053bab8a6528cb7bc44a5c1f"
+source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp#9d5990a8cf6245a5053bab8a6528cb7bc44a5c1f"
 dependencies = [
  "anyhow",
  "cfg-if",
@@ -386,7 +386,7 @@ dependencies = [
  "digest",
  "elliptic-curve",
  "hex-literal",
- "rfc6979 0.4.0 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa)",
+ "rfc6979 0.4.0 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp)",
  "serdect",
  "signature",
  "spki",
@@ -613,7 +613,7 @@ dependencies = [
  "blobby",
  "cfg-if",
  "criterion",
- "ecdsa 0.16.9 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa)",
+ "ecdsa 0.16.9 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp)",
  "elliptic-curve",
  "hex",
  "hex-literal",
@@ -1174,7 +1174,7 @@ dependencies = [
 [[package]]
 name = "rfc6979"
 version = "0.4.0"
-source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa#9d5990a8cf6245a5053bab8a6528cb7bc44a5c1f"
+source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp#9d5990a8cf6245a5053bab8a6528cb7bc44a5c1f"
 dependencies = [
  "hmac",
  "subtle",
@@ -1702,7 +1702,7 @@ checksum = "ced3678a2879b30306d323f4542626697a464a97c0a07c9aebf7ebca65cd4dde"
 [[package]]
 name = "zkm-lib"
 version = "1.0.0"
-source = "git+https://github.com/felicityin/zkMIPS?branch=upgrade-deps#5b5a71f2fc860b0290f7f7723815cd73ba4917f8"
+source = "git+https://github.com/felicityin/zkMIPS?branch=upgrade-deps#aa9070efe5ba1422b202d369a9ace8afefd6cb06"
 dependencies = [
  "bincode",
  "cfg-if",
@@ -1715,7 +1715,7 @@ dependencies = [
 [[package]]
 name = "zkm-primitives"
 version = "1.0.0"
-source = "git+https://github.com/felicityin/zkMIPS?branch=upgrade-deps#5b5a71f2fc860b0290f7f7723815cd73ba4917f8"
+source = "git+https://github.com/felicityin/zkMIPS?branch=upgrade-deps#aa9070efe5ba1422b202d369a9ace8afefd6cb06"
 dependencies = [
  "bincode",
  "hex",
