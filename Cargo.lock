@@ -350,7 +350,7 @@ dependencies = [
 [[package]]
 name = "ecdsa"
 version = "0.16.9"
-source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=patch-ecdsa-0.16.9#5217f3805a825f95ef400827c96010f2fc009679"
+source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa#9d5990a8cf6245a5053bab8a6528cb7bc44a5c1f"
 dependencies = [
  "anyhow",
  "cfg-if",
@@ -358,11 +358,11 @@ dependencies = [
  "digest",
  "elliptic-curve",
  "hex-literal",
- "rfc6979 0.4.0 (git+https://github.com/zkMIPS-patches/signatures.git?branch=patch-ecdsa-0.16.9)",
+ "rfc6979 0.4.0 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa)",
  "serdect",
  "signature",
  "spki",
- "zkm-lib 1.0.0 (git+https://github.com/zkMIPS/zkMIPS.git)",
+ "zkm-lib",
 ]
 
 [[package]]
@@ -751,7 +751,7 @@ version = "0.13.2"
 dependencies = [
  "blobby",
  "criterion",
- "ecdsa 0.16.9 (git+https://github.com/zkMIPS-patches/signatures.git?branch=patch-ecdsa-0.16.9)",
+ "ecdsa 0.16.9 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa)",
  "elliptic-curve",
  "hex",
  "hex-literal",
@@ -760,7 +760,7 @@ dependencies = [
  "rand_core",
  "serdect",
  "sha2",
- "zkm-lib 1.0.0 (git+https://github.com/felicityin/zkMIPS?branch=upgrade-deps)",
+ "zkm-lib",
 ]
 
 [[package]]
@@ -1152,7 +1152,7 @@ dependencies = [
 [[package]]
 name = "rfc6979"
 version = "0.4.0"
-source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=patch-ecdsa-0.16.9#5217f3805a825f95ef400827c96010f2fc009679"
+source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa#9d5990a8cf6245a5053bab8a6528cb7bc44a5c1f"
 dependencies = [
  "hmac",
  "subtle",
@@ -1716,18 +1716,6 @@ dependencies = [
  "serde",
  "sha2",
  "zkm-primitives",
-]
-
-[[package]]
-name = "zkm-lib"
-version = "1.0.0"
-source = "git+https://github.com/zkMIPS/zkMIPS.git#e44baab1da54fba7c94241896e69f54431d743a0"
-dependencies = [
- "bincode",
- "cfg-if",
- "elliptic-curve",
- "serde",
- "sha2",
 ]
 
 [[package]]
