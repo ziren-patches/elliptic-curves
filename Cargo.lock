@@ -378,7 +378,7 @@ dependencies = [
 [[package]]
 name = "ecdsa"
 version = "0.16.9"
-source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp#1c108f450817f83dee19ff69c5359e4d1d725a32"
+source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp-1#1c108f450817f83dee19ff69c5359e4d1d725a32"
 dependencies = [
  "anyhow",
  "cfg-if",
@@ -386,7 +386,7 @@ dependencies = [
  "digest",
  "elliptic-curve",
  "hex-literal",
- "rfc6979 0.4.0 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp)",
+ "rfc6979 0.4.0 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp-1)",
  "serdect",
  "signature",
  "spki",
@@ -613,7 +613,7 @@ dependencies = [
  "blobby",
  "cfg-if",
  "criterion",
- "ecdsa 0.16.9 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp)",
+ "ecdsa 0.16.9 (git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp-1)",
  "elliptic-curve",
  "hex",
  "hex-literal",
@@ -1174,7 +1174,7 @@ dependencies = [
 [[package]]
 name = "rfc6979"
 version = "0.4.0"
-source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp#1c108f450817f83dee19ff69c5359e4d1d725a32"
+source = "git+https://github.com/zkMIPS-patches/signatures.git?branch=ecdsa-tmp-1#1c108f450817f83dee19ff69c5359e4d1d725a32"
 dependencies = [
  "hmac",
  "subtle",
