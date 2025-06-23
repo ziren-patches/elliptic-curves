@@ -228,14 +228,14 @@ pub(crate) fn call_sqrt_hook(x: &[u8], modulus: &'static str, nqr: &[u8]) -> (u8
 /// - `modulus`: The modulus to inverse with respect to.
 #[cfg(target_os = "zkvm")]
 pub(crate) fn call_inv_hook(x: &[u8], modulus: &'static str) -> Vec<u8> {
-    // zkm_lib::unconstrained! {
+    zkm_lib::unconstrained! {
         let mut buf = Vec::new();
         buf.extend_from_slice(&32_u32.to_be_bytes());
         buf.extend_from_slice(x);
         buf.extend_from_slice(&hex::decode(modulus).unwrap());
 
         zkm_lib::io::write(zkm_lib::io::FD_FP_INV, buf.as_slice());
-    // }
+    }
 
     zkm_lib::io::read_vec()
 }
