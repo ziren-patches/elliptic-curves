@@ -176,7 +176,7 @@ impl Scalar {
         CtOption::new(res, !self.is_zero())
     }
     
-    /// Compute the inverse using the zkMIPS Hook.
+    /// Compute the inverse using the Ziren Hook.
     #[cfg(target_os = "zkvm")]
     pub fn invert(&self) -> CtOption<Self> {
         if self.is_zero().into() {

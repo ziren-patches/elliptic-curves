@@ -26,7 +26,7 @@ elliptic-curve = { version = "0.13.8", default-features = false, features = [
 
 # optional dependencies
 once_cell = { version = "1.19", optional = true, default-features = false }
-ecdsa-core = { git = "https://github.com/zkMIPS-patches/signatures.git", branch = "patch-ecdsa-0.16.9", package = "ecdsa", optional = true, default-features = false, features = [
+ecdsa-core = { git = "https://github.com/ziren-patches/signatures.git", branch = "patch-ecdsa-0.16.9", package = "ecdsa", optional = true, default-features = false, features = [
     "der",
 ] }
 hex-literal = { version = "0.4", optional = true }
@@ -35,13 +35,13 @@ sha2 = { version = "0.10", optional = true, default-features = false }
 signature = { version = "2", optional = true }
 
 [target.'cfg(all(target_os = "zkvm"))'.dependencies]
-zkm-lib = { git = "https://github.com/zkMIPS/zkMIPS", features = ["ecdsa"] }
+zkm-lib = { git = "https://github.com/ProjectZKM/Ziren", features = ["ecdsa"] }
 hex = "=0.4"
 
 [dev-dependencies]
 blobby = "0.3"
 criterion = "0.5"
-ecdsa-core = { git = "https://github.com/zkMIPS-patches/signatures.git", branch = "patch-ecdsa-0.16.9", package = "ecdsa", default-features = false, features = [
+ecdsa-core = { git = "https://github.com/ziren-patches/signatures.git", branch = "patch-ecdsa-0.16.9", package = "ecdsa", default-features = false, features = [
     "dev",
 ] }
 hex-literal = "0.4"

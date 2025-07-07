@@ -24,11 +24,11 @@ mod zkvm {
     use elliptic_curve::{FieldBytes, subtle::CtOption};
     use super::{Secp256k1, FieldElement, scalar};
 
-    /// zkMIPS AffinePoint
+    /// Ziren AffinePoint
     pub type AffinePoint = zkm_lib::ecdsa::AffinePoint<Secp256k1>;
-    /// zkMIPS ProjectivePoint
+    /// Ziren ProjectivePoint
     pub type ProjectivePoint = zkm_lib::ecdsa::ProjectivePoint<Secp256k1>;
-    /// zkMIPS Scalar
+    /// Ziren Scalar
     pub type Scalar = scalar::Scalar;
 
     impl zkm_lib::ecdsa::ECDSACurve for Secp256k1 {
