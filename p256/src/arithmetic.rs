@@ -73,15 +73,15 @@ mod succinct_types {
 
     /// Elliptic curve point in affine coordinates.
     ///
-    /// For use inside the zkMIPS zkvm.
+    /// For use inside the Ziren zkvm.
     pub type AffinePoint = zkm_lib::ecdsa::AffinePoint<NistP256>;
 
     /// Elliptic curve point in projective coordinates.
     /// 
-    /// For use inside the zkMIPS zkvm.
+    /// For use inside the Ziren zkvm.
     pub type ProjectivePoint = zkm_lib::ecdsa::ProjectivePoint<NistP256>;
 
-    /// The actual scalar type used in the zkMIPS zkvm.
+    /// The actual scalar type used in the Ziren zkvm.
     pub type Scalar = scalar::Scalar;
 }
 

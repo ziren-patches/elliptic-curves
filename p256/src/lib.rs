@@ -189,7 +189,7 @@ extern crate alloc;
 #[cfg(target_os = "zkvm")]
 use alloc::vec::Vec;
 
-/// Call the zkMIPS sqrt hook.
+/// Call the Ziren sqrt hook.
 ///
 /// This hook takes in a field element and returns the square root of the element (with respect to the modulus).
 ///

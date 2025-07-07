@@ -39,7 +39,7 @@
 //! # }
 //! ```
 
-/// zkMIPS-patches: re-export ecdsa-core as its our patched version.
+/// Ziren-patches: re-export ecdsa-core as its our patched version.
 pub use ecdsa_core::{
     self,
     RecoveryId,
